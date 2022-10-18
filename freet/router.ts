@@ -54,6 +54,8 @@ router.get(
  * @name POST /api/freets
  *
  * @param {string} content - The content of the freet
+ * @param {number} upvotes - The number of upvotes on the freet
+ * @param {number} downvotes - The number of downvotes on the freet
  * @return {FreetResponse} - The created freet
  * @throws {403} - If the user is not logged in
  * @throws {400} - If the freet content is empty or a stream of empty spaces
@@ -124,6 +126,10 @@ router.put(
   ],
   async (req: Request, res: Response) => {
     const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
+    await FreetCollection.incrementUpvote(req.params.freetId);
+    await FreetCollection.decrementUpvote(req.params.freetId);
+    await FreetCollection.incrementDownvote(req.params.freetId);
+    await FreetCollection.decrementDownvote(req.params.freetId);
     res.status(200).json({
       message: 'Your freet was updated successfully.',
       freet: util.constructFreetResponse(freet)

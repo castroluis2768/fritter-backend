@@ -304,6 +304,74 @@ This renders the `index.html` file that will be used to interact with the backen
 - `400` if username or password is in the wrong format
 - `409` if the username is already in use
 
+#### `PUT /api/freets/iupvote` - Increment a freet's upvote
+
+**Body** _(no need to add fields that are not being changed)_
+
+- `upvotes` _{number}_ - The number of upvotes on a freet
+
+**Returns**
+
+- A success message
+- An object with the update user details (without password)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` if username or password is in the wrong format
+- `409` if the username is already in use
+
+#### `PUT /api/freets/dupvote` - Decrement a freet's upvote
+
+**Body** _(no need to add fields that are not being changed)_
+
+- `upvotes` _{number}_ - The number of upvotes on a freet
+
+**Returns**
+
+- A success message
+- An object with the update user details (without password)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` if username or password is in the wrong format
+- `409` if the username is already in use
+
+#### `PUT /api/freets/idownvote` - Increment a freet's downvote
+
+**Body** _(no need to add fields that are not being changed)_
+
+- `downvotes` _{number}_ - The number of downvotes on a freet
+
+**Returns**
+
+- A success message
+- An object with the update user details (without password)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` if username or password is in the wrong format
+- `409` if the username is already in use
+
+#### `PUT /api/freets/ddownvote` - Decrement a freet's downvote
+
+**Body** _(no need to add fields that are not being changed)_
+
+- `downvotes` _{number}_ - The number of downvotes on a freet
+
+**Returns**
+
+- A success message
+- An object with the update user details (without password)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` if username or password is in the wrong format
+- `409` if the username is already in use
+
 #### `DELETE /api/users` - Delete user
 
 **Returns**

@@ -70,6 +70,9 @@ router.delete(
  *
  * @param {string} username - username of user
  * @param {string} password - user's password
+ * @param {number} reputationScore - user's reputation score (defaulted to 0)
+ * @param {number} totalUpvotes - user's count of total upvotes (defaulted to 0)
+ * @param {number} totalDownvotes - user's count of total downvotes (defaulted to 0)
  * @return {UserResponse} - The created user
  * @throws {403} - If there is a user already logged in
  * @throws {409} - If username is already taken

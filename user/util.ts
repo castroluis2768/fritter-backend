@@ -6,6 +6,9 @@ import type {User} from './model';
 type UserResponse = {
   _id: string;
   username: string;
+  reputationScore: number;
+  totalUpvotes: number;
+  totalDownvotes: number;
   dateJoined: string;
 };
 

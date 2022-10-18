@@ -55,6 +55,7 @@ const isValidFreetModifier = async (req: Request, res: Response, next: NextFunct
     });
     return;
   }
+  else 
 
   next();
 };

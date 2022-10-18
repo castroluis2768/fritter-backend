@@ -20,8 +20,11 @@ class UserCollection {
    */
   static async addOne(username: string, password: string): Promise<HydratedDocument<User>> {
     const dateJoined = new Date();
+    const reputationScore = new Number(0);
+    const totalUpvotes = new Number(0); 
+    const totalDownvotes = new Number(0); 
 
-    const user = new UserModel({username, password, dateJoined});
+    const user = new UserModel({username, password, reputationScore, totalUpvotes, totalDownvotes, dateJoined});
     await user.save(); // Saves user to MongoDB
     return user;
   }
@@ -75,6 +78,18 @@ class UserCollection {
 
     if (userDetails.username) {
       user.username = userDetails.username as string;
+    }
+
+    if (userDetails.reputationScore) {
+      user.reputationScore = userDetails.reputationScore as number;
+    }
+    
+    if (userDetails.totalUpvotes) {
+      user.totalUpvotes = userDetails.totalUpvotes as number;
+    }
+
+    if (userDetails.totalDownvotes) {
+      user.totalDownvotes = userDetails.totalDownvotes as number;
     }
 
     await user.save();

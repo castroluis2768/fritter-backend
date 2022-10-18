@@ -11,6 +11,9 @@ export type User = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   username: string;
   password: string;
+  totalUpvotes: number;
+  totalDownvotes: number;
+  reputationScore: number;
   dateJoined: Date;
 };
 
@@ -26,6 +29,21 @@ const UserSchema = new Schema({
   // The user's password
   password: {
     type: String,
+    required: true
+  },
+  // The reputation score associated with the user
+  reputationScore: {
+    type: Number,
+    required: true
+  },
+  // The total amount of upvotes a user has ever had
+  totalUpvotes: {
+    type: Number,
+    required: true
+  },
+  // The total amount of downvotes a user has ever had 
+  totalDownvotes: {
+    type: Number,
     required: true
   },
   // The date the user joined
