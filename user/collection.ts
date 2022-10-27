@@ -1,5 +1,7 @@
-import type {HydratedDocument, Types} from 'mongoose';
-import type {User} from './model';
+import {HydratedDocument, Types} from 'mongoose';
+import type {User, PopulatedUser} from './model';
+import type {Group} from '../group/model';
+import GroupModel from '../group/model';
 import UserModel from './model';
 
 /**
@@ -14,19 +16,26 @@ class UserCollection {
   /**
    * Add a new user
    *
+   * @param {string} name - The name of the user
    * @param {string} username - The username of the user
    * @param {string} password - The password of the user
    * @return {Promise<HydratedDocument<User>>} - The newly created user
    */
-  static async addOne(username: string, password: string): Promise<HydratedDocument<User>> {
+  static async addOne(name: string, username: string, password: string): Promise<HydratedDocument<User>> {
     const dateJoined = new Date();
+    const followers = new Number(0); 
+    const following = new Number(0);
+    const totalFreets = new Number(0);
     const reputationScore = new Number(0);
     const totalUpvotes = new Number(0); 
     const totalDownvotes = new Number(0); 
+    const groups = new Array<Types.ObjectId>();
+    const likedFreets = new Array<Types.ObjectId>();
+    const dislikedFreets = new Array<Types.ObjectId>();
 
-    const user = new UserModel({username, password, reputationScore, totalUpvotes, totalDownvotes, dateJoined});
+    const user = new UserModel({name, username, password, followers, following, totalFreets, totalUpvotes, totalDownvotes, reputationScore, groups, likedFreets, dislikedFreets, dateJoined});
     await user.save(); // Saves user to MongoDB
-    return user;
+    return user.populate('groups');
   }
 
   /**
@@ -71,7 +80,7 @@ class UserCollection {
    * @return {Promise<HydratedDocument<User>>} - The updated user
    */
   static async updateOne(userId: Types.ObjectId | string, userDetails: any): Promise<HydratedDocument<User>> {
-    const user = await UserModel.findOne({_id: userId});
+    const user = await UserModel.findOne({_id: userId}).populate('groups');
     if (userDetails.password) {
       user.password = userDetails.password as string;
     }
@@ -92,6 +101,62 @@ class UserCollection {
       user.totalDownvotes = userDetails.totalDownvotes as number;
     }
 
+    if (userDetails.groups) {
+      user.groups = userDetails.group as Types.ObjectId[];
+    }
+
+    await user.save();
+    return user.populate('groups');
+  }
+
+  /**
+   * Update a freet by decrementing the upvote count
+   *
+   * @param {string} freetId - The id of the freet to be updated
+   * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
+   */
+  static async addLikedFreet(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<HydratedDocument<User>> {
+      const user = await UserModel.findOne({_id: userId});
+      user.likedFreets.push(new Types.ObjectId(freetId));
+      await user.save();
+      return user;
+    }
+  
+  /**
+   * Update a freet by decrementing the upvote count
+   *
+   * @param {string} freetId - The id of the freet to be updated
+   * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
+   */
+  static async removeLikedFreet(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<HydratedDocument<User>> {
+      const user = await UserModel.findOne({_id: userId});
+      user.likedFreets.splice(user.likedFreets.indexOf(new Types.ObjectId(freetId)), 1);   
+      await user.save();
+      return user;
+    }
+
+  /**
+   * Update a freet by decrementing the upvote count
+   *
+   * @param {string} freetId - The id of the freet to be updated
+   * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
+   */
+  static async addDislikedFreet(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<HydratedDocument<User>> {
+    const user = await UserModel.findOne({_id: userId});
+    user.dislikedFreets.push(new Types.ObjectId(freetId));
+    await user.save();
+    return user;
+  }
+  
+  /**
+   * Update a freet by decrementing the upvote count
+   *
+   * @param {string} freetId - The id of the freet to be updated
+   * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
+   */
+  static async removeDislikedFreet(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<HydratedDocument<User>> {
+    const user = await UserModel.findOne({_id: userId});
+    user.dislikedFreets.splice(user.dislikedFreets.indexOf(new Types.ObjectId(freetId)), 1);   
     await user.save();
     return user;
   }

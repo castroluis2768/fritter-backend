@@ -42,7 +42,17 @@ const formsAndHandlers = {
   'increment-upvote': incrementUpvoteFreet,
   'decrement-upvote': decrementUpvoteFreet,
   'increment-downvote': incrementDownvoteFreet, 
-  'decrement-downvote': decrementDownvoteFreet
+  'decrement-downvote': decrementDownvoteFreet,
+  'create-message': createMessage,
+  'delete-message': deleteMessage,
+  'get-messages-in-group': getMessagesInGroup, 
+  'create-group': createGroup, 
+  'get-all-groups': getAllGroups, 
+  'get-groups-by-author': getGroupsByAuthor, 
+  'delete-group': deleteGroup, 
+  'add-member-to-group': addMemberToGroup, 
+  'remove-member-from-group': removeMemberFromGroup, 
+  'view-templates': viewTemplates
 };
 
 // Attach handlers to forms

@@ -11,6 +11,10 @@ import dotenv from 'dotenv';
 import * as userValidator from '../user/middleware';
 import {userRouter} from '../user/router';
 import {freetRouter} from '../freet/router';
+import {groupRouter} from '../group/router';
+import {messageRouter} from '../message/router';
+import {templateRouter} from '../template/router';
+
 
 // Load environmental variables
 dotenv.config({});
@@ -76,6 +80,9 @@ app.get('/', (req: Request, res: Response) => {
 // Add routers from routes folder
 app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
+app.use('/api/groups', groupRouter);
+app.use('/api/messages', messageRouter);
+app.use('/api/templates', templateRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {

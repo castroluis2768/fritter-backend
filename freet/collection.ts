@@ -92,8 +92,7 @@ class FreetCollection {
     freet.upvotes += 1;
     freet.dateModified = new Date();
     await freet.save();
-    return freet;
-    // return freet.populate('authorId'); 
+    return freet.populate('authorId'); 
   }
 
   /**
@@ -107,8 +106,7 @@ class FreetCollection {
     freet.upvotes -= 1;
     freet.dateModified = new Date();
     await freet.save();
-    return freet;
-    // return freet.populate('authorId');
+    return freet.populate('authorId');
   }
 
   /**
@@ -122,8 +120,7 @@ class FreetCollection {
     freet.downvotes += 1;
     freet.dateModified = new Date();
     await freet.save();
-    return freet;
-    // return freet.populate('authorId');
+    return freet.populate('authorId');
   }
 
    /**
@@ -137,8 +134,7 @@ class FreetCollection {
     freet.downvotes -= 1;
     freet.dateModified = new Date();
     await freet.save();
-    return freet; 
-    // return freet.populate('authorId');
+    return freet.populate('authorId');
   }
   
 

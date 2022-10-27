@@ -1,9 +1,12 @@
 import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import FreetCollection from './collection';
+import UserCollection from '../user/collection';
 import * as userValidator from '../user/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as util from './util';
+import { Types, HydratedDocument } from 'mongoose';
+import type {Freet} from './model'
 
 const router = express.Router();
 
@@ -104,7 +107,7 @@ router.delete(
 );
 
 /**
- * Modify a freet
+ * Modify the contents of a freet
  *
  * @name PUT /api/freets/:id
  *
@@ -116,6 +119,11 @@ router.delete(
  * @throws {400} - If the freet content is empty or a stream of empty spaces
  * @throws {413} - If the freet content is more than 140 characters long
  */
+/**
+ * Perform like/dislike actions on a freet 
+ * 
+ * @name PUT api/freets/:id
+ */
 router.put(
   '/:freetId?',
   [
@@ -125,16 +133,32 @@ router.put(
     freetValidator.isValidFreetContent
   ],
   async (req: Request, res: Response) => {
-    const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
-    await FreetCollection.incrementUpvote(req.params.freetId);
-    await FreetCollection.decrementUpvote(req.params.freetId);
-    await FreetCollection.incrementDownvote(req.params.freetId);
-    await FreetCollection.decrementDownvote(req.params.freetId);
+    let freet: HydratedDocument<Freet>; 
+    let user = await UserCollection.findOneByUserId(req.session.userId); 
+    if (req.body.action == 'editContent') {
+      freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
+    }
+    if (req.body.action == 'addUpvote' && !user.likedFreets.includes(req.params.freetID as unknown as Types.ObjectId)) {
+      freet = await FreetCollection.incrementUpvote(req.params.freetId);
+      user = await UserCollection.addLikedFreet(req.session.userId, req.params.freetID);
+    }
+    if (req.body.action == 'subtractUpvote' && !user.likedFreets.includes(req.params.freetID as unknown as Types.ObjectId)) {
+      freet = await FreetCollection.decrementUpvote(req.params.freetId);
+      user = await UserCollection.removeLikedFreet(req.session.userId, req.params.freetID);
+    }
+    if (req.body.action == 'addDownvote' && !user.likedFreets.includes(req.params.freetID as unknown as Types.ObjectId)) {
+      freet = await FreetCollection.incrementDownvote(req.params.freetId);
+      user = await UserCollection.addDislikedFreet(req.session.userId, req.params.freetID);
+    }
+    if (req.body.action == 'subtractDownvote' && !user.likedFreets.includes(req.params.freetID as unknown as Types.ObjectId)) {
+      freet = await FreetCollection.decrementDownvote(req.params.freetId);
+      user = await UserCollection.removeDislikedFreet(req.session.userId, req.params.freetID);
+    } 
+
     res.status(200).json({
       message: 'Your freet was updated successfully.',
       freet: util.constructFreetResponse(freet)
     });
-  }
-);
+  });
 
 export {router as freetRouter};
